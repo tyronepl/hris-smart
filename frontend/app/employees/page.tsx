@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
+  CheckCircle,
   Plus,
   Search,
+  XCircle,
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import EmployeeViewModal from "./components/EmployeeViewModal";
@@ -59,11 +61,32 @@ export default function EmployeesPage() {
   const [error, setError] = useState("");
 
   // =========================
+  // NOTIFICATIONS
+  // =========================
+
+  const [success, setSuccess] = useState("");
+
+  function showSuccess(message: string) {
+    setSuccess(message);
+
+    setTimeout(() => {
+      setSuccess("");
+    }, 4000);
+  }
+
+  function showError(message: string) {
+    setError(message);
+
+    setTimeout(() => {
+      setError("");
+    }, 5000);
+  }
+
+  // =========================
   // CREATE / EDIT MODAL
   // =========================
 
-  const [modalOpen, setModalOpen] =
-    useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const [editingEmployee, setEditingEmployee] =
     useState<Employee | null>(null);
@@ -100,7 +123,7 @@ export default function EmployeesPage() {
       localStorage.getItem("accessToken");
 
     if (!token) {
-      setError(
+      showError(
         "Your session has expired. Please log in again.",
       );
 
@@ -130,12 +153,12 @@ export default function EmployeesPage() {
       );
 
       if (axios.isAxiosError(err)) {
-        setError(
+        showError(
           err.response?.data?.message ||
             "Unable to load employees.",
         );
       } else {
-        setError(
+        showError(
           "Unable to connect to the server.",
         );
       }
@@ -258,7 +281,7 @@ export default function EmployeesPage() {
     if (
       !allowedTypes.includes(file.type)
     ) {
-      setError(
+      showError(
         "Please select a PDF, DOC, or DOCX resume.",
       );
 
@@ -272,7 +295,7 @@ export default function EmployeesPage() {
       file.size >
       10 * 1024 * 1024
     ) {
-      setError(
+      showError(
         "Resume file must be 10 MB or smaller.",
       );
 
@@ -288,7 +311,7 @@ export default function EmployeesPage() {
       );
 
     if (!token) {
-      setError(
+      showError(
         "Your session has expired. Please log in again.",
       );
 
@@ -360,6 +383,10 @@ export default function EmployeesPage() {
       }));
 
       setError("");
+
+      showSuccess(
+        "Resume analyzed successfully.",
+      );
     } catch (err) {
       console.error(
         "Resume AI parsing error:",
@@ -367,12 +394,12 @@ export default function EmployeesPage() {
       );
 
       if (axios.isAxiosError(err)) {
-        setError(
+        showError(
           err.response?.data?.message ||
             "Unable to process the resume with AI.",
         );
       } else {
-        setError(
+        showError(
           "Unable to process the resume.",
         );
       }
@@ -430,7 +457,7 @@ export default function EmployeesPage() {
       );
 
     if (!token) {
-      setError(
+      showError(
         "Your session has expired.",
       );
 
@@ -438,7 +465,7 @@ export default function EmployeesPage() {
     }
 
     if (parsingResume) {
-      setError(
+      showError(
         "Please wait for the resume analysis to finish.",
       );
 
@@ -497,6 +524,12 @@ export default function EmployeesPage() {
                   : item,
             ),
         );
+
+        closeModal();
+
+        showSuccess(
+          "Employee updated successfully.",
+        );
       }
 
       // =========================
@@ -535,9 +568,13 @@ export default function EmployeesPage() {
             ...current,
           ],
         );
-      }
 
-      closeModal();
+        closeModal();
+
+        showSuccess(
+          "Employee created successfully.",
+        );
+      }
     } catch (err) {
       console.error(
         "Save employee error:",
@@ -545,12 +582,12 @@ export default function EmployeesPage() {
       );
 
       if (axios.isAxiosError(err)) {
-        setError(
+        showError(
           err.response?.data?.message ||
             "Unable to save employee.",
         );
       } else {
-        setError(
+        showError(
           "Unable to connect to the server.",
         );
       }
@@ -580,7 +617,7 @@ export default function EmployeesPage() {
       );
 
     if (!token) {
-      setError(
+      showError(
         "Your session has expired.",
       );
 
@@ -604,6 +641,10 @@ export default function EmployeesPage() {
               employee.id !== id,
           ),
       );
+
+      showSuccess(
+        "Employee deleted successfully.",
+      );
     } catch (err) {
       console.error(
         "Delete employee error:",
@@ -611,9 +652,13 @@ export default function EmployeesPage() {
       );
 
       if (axios.isAxiosError(err)) {
-        setError(
+        showError(
           err.response?.data?.message ||
             "Unable to delete employee.",
+        );
+      } else {
+        showError(
+          "Unable to delete employee.",
         );
       }
     }
@@ -649,6 +694,72 @@ export default function EmployeesPage() {
   return (
     <DashboardLayout>
       {/* =========================
+          NOTIFICATIONS
+      ========================= */}
+
+      {(success || error) && (
+        <div className="fixed right-6 top-6 z-[100] w-full max-w-sm">
+          {success && (
+            <div className="flex items-start gap-3 rounded-xl border border-green-200 bg-white p-4 shadow-lg">
+              <CheckCircle
+                size={22}
+                className="mt-0.5 shrink-0 text-green-500"
+              />
+
+              <div className="flex-1">
+                <p className="font-semibold text-gray-900">
+                  Success
+                </p>
+
+                <p className="mt-1 text-sm text-gray-600">
+                  {success}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setSuccess("")
+                }
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XCircle size={18} />
+              </button>
+            </div>
+          )}
+
+          {error && (
+            <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-white p-4 shadow-lg">
+              <XCircle
+                size={22}
+                className="mt-0.5 shrink-0 text-red-500"
+              />
+
+              <div className="flex-1">
+                <p className="font-semibold text-gray-900">
+                  Error
+                </p>
+
+                <p className="mt-1 text-sm text-gray-600">
+                  {error}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setError("")
+                }
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XCircle size={18} />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* =========================
           PAGE HEADER
       ========================= */}
 
@@ -676,18 +787,6 @@ export default function EmployeesPage() {
           Add Employee
         </button>
       </div>
-
-      {/* =========================
-          ERROR
-      ========================= */}
-
-      {error &&
-        !modalOpen &&
-        !viewingEmployee && (
-          <div className="mb-6 rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
-            {error}
-          </div>
-        )}
 
       {/* =========================
           SEARCH
