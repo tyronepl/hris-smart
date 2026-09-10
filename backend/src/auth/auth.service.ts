@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -16,6 +17,14 @@ export class AuthService {
   ) {}
 
   async register(name: string, email: string, password: string) {
+    const userCount = await this.usersService.count();
+
+    if (userCount > 0) {
+      throw new ForbiddenException(
+        'HR registration is already closed',
+      );
+    }
+
     const existingUser = await this.usersService.findByEmail(email);
 
     if (existingUser) {

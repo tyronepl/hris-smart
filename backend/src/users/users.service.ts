@@ -37,4 +37,8 @@ export class UsersService {
 
     return this.usersRepository.save(user);
   }
+
+  async count(): Promise<number> {
+    return this.usersRepository.count();
+  }
 }
