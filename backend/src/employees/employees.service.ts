@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -6,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Employee } from './entities/employee.entity';
-import { Express } from 'express';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
@@ -17,10 +17,30 @@ export class EmployeesService {
     private readonly employeesRepository: Repository<Employee>,
   ) {}
 
-  async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
-    const employee = this.employeesRepository.create(createEmployeeDto);
+  async create(
+    createEmployeeDto: CreateEmployeeDto,
+  ): Promise<Employee> {
+    const existingEmployee =
+      await this.employeesRepository.findOne({
+        where: {
+          email: createEmployeeDto.email,
+        },
+      });
 
-    return this.employeesRepository.save(employee);
+    if (existingEmployee) {
+      throw new BadRequestException(
+        'An employee with this email already exists.',
+      );
+    }
+
+    const employee =
+      this.employeesRepository.create(
+        createEmployeeDto,
+      );
+
+    return this.employeesRepository.save(
+      employee,
+    );
   }
 
   async findAll(): Promise<Employee[]> {
@@ -32,12 +52,15 @@ export class EmployeesService {
   }
 
   async findOne(id: number): Promise<Employee> {
-    const employee = await this.employeesRepository.findOne({
-      where: { id },
-    });
+    const employee =
+      await this.employeesRepository.findOne({
+        where: { id },
+      });
 
     if (!employee) {
-      throw new NotFoundException('Employee not found');
+      throw new NotFoundException(
+        'Employee not found',
+      );
     }
 
     return employee;
@@ -47,20 +70,50 @@ export class EmployeesService {
     id: number,
     updateEmployeeDto: UpdateEmployeeDto,
   ): Promise<Employee> {
-    const employee = await this.findOne(id);
+    const employee =
+      await this.findOne(id);
 
-    Object.assign(employee, updateEmployeeDto);
+    if (updateEmployeeDto.email) {
+      const existingEmployee =
+        await this.employeesRepository.findOne({
+          where: {
+            email: updateEmployeeDto.email,
+          },
+        });
 
-    return this.employeesRepository.save(employee);
+      if (
+        existingEmployee &&
+        existingEmployee.id !== id
+      ) {
+        throw new BadRequestException(
+          'An employee with this email already exists.',
+        );
+      }
+    }
+
+    Object.assign(
+      employee,
+      updateEmployeeDto,
+    );
+
+    return this.employeesRepository.save(
+      employee,
+    );
   }
 
-  async remove(id: number): Promise<{ message: string }> {
-    const employee = await this.findOne(id);
+  async remove(
+    id: number,
+  ): Promise<{ message: string }> {
+    const employee =
+      await this.findOne(id);
 
-    await this.employeesRepository.remove(employee);
+    await this.employeesRepository.remove(
+      employee,
+    );
 
     return {
-      message: 'Employee deleted successfully',
+      message:
+        'Employee deleted successfully',
     };
   }
 
@@ -68,13 +121,21 @@ export class EmployeesService {
     id: number,
     file: any,
     resumeText: string,
-    ): Promise<Employee> {
-        const employee = await this.findOne(id);
+  ): Promise<Employee> {
+    const employee =
+      await this.findOne(id);
 
-        employee.resumeOriginalName = file.originalname;
-        employee.resumePath = file.path;
-        employee.resumeText = resumeText;
+    employee.resumeOriginalName =
+      file.originalname;
 
-        return this.employeesRepository.save(employee);
-    }
+    employee.resumePath =
+      file.path;
+
+    employee.resumeText =
+      resumeText;
+
+    return this.employeesRepository.save(
+      employee,
+    );
+  }
 }
