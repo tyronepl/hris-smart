@@ -16,7 +16,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(name: string, email: string, password: string) {
+  async register(
+    name: string,
+    email: string,
+    password: string,
+  ) {
     const userCount = await this.usersService.count();
 
     if (userCount > 0) {
@@ -25,13 +29,19 @@ export class AuthService {
       );
     }
 
-    const existingUser = await this.usersService.findByEmail(email);
+    const existingUser =
+      await this.usersService.findByEmail(email);
 
     if (existingUser) {
-      throw new ConflictException('Email is already registered');
+      throw new ConflictException(
+        'Email is already registered',
+      );
     }
 
-    const passwordHash = await bcrypt.hash(password, 12);
+    const passwordHash = await bcrypt.hash(
+      password,
+      12,
+    );
 
     const user = await this.usersService.create({
       name,
@@ -50,20 +60,29 @@ export class AuthService {
     };
   }
 
-  async login(email: string, password: string) {
-    const user = await this.usersService.findByEmail(email);
+  async login(
+    email: string,
+    password: string,
+  ) {
+    const user =
+      await this.usersService.findByEmail(email);
 
     if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException(
+        'Invalid email or password',
+      );
     }
 
-    const passwordMatches = await bcrypt.compare(
-      password,
-      user.passwordHash,
-    );
+    const passwordMatches =
+      await bcrypt.compare(
+        password,
+        user.passwordHash,
+      );
 
     if (!passwordMatches) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException(
+        'Invalid email or password',
+      );
     }
 
     const payload = {
@@ -72,7 +91,8 @@ export class AuthService {
       role: user.role,
     };
 
-    const accessToken = await this.jwtService.signAsync(payload);
+    const accessToken =
+      await this.jwtService.signAsync(payload);
 
     return {
       message: 'Login successful',
@@ -83,6 +103,105 @@ export class AuthService {
         email: user.email,
         role: user.role,
       },
+    };
+  }
+
+  async getCurrentUser(userId: number) {
+    const user =
+      await this.usersService.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException(
+        'User not found',
+      );
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+  }
+
+  async updateProfile(
+    userId: number,
+    name: string,
+  ) {
+    const trimmedName = name.trim();
+
+    if (!trimmedName) {
+      throw new ConflictException(
+        'Name cannot be empty',
+      );
+    }
+
+    const user =
+      await this.usersService.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException(
+        'User not found',
+      );
+    }
+
+    user.name = trimmedName;
+
+    const updatedUser =
+      await this.usersService.save(user);
+
+    return {
+      message: 'Profile updated successfully',
+      user: {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+      },
+    };
+  }
+
+  async changePassword(
+    userId: number,
+    currentPassword: string,
+    newPassword: string,
+  ) {
+    if (!newPassword || newPassword.length < 8) {
+      throw new ConflictException(
+        'New password must be at least 8 characters',
+      );
+    }
+
+    const user =
+      await this.usersService.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException(
+        'User not found',
+      );
+    }
+
+    const passwordMatches =
+      await bcrypt.compare(
+        currentPassword,
+        user.passwordHash,
+      );
+
+    if (!passwordMatches) {
+      throw new UnauthorizedException(
+        'Current password is incorrect',
+      );
+    }
+
+    const newPasswordHash =
+      await bcrypt.hash(newPassword, 12);
+
+    user.passwordHash = newPasswordHash;
+
+    await this.usersService.save(user);
+
+    return {
+      message: 'Password changed successfully',
     };
   }
 }

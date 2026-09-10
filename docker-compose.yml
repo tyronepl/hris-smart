@@ -3,6 +3,7 @@ services:
     image: mysql:8.4
     container_name: hris-smart-mysql
     restart: unless-stopped
+    command: --mysql-native-password=ON
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: hris_smart

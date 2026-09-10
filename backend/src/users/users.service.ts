@@ -11,13 +11,17 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(
+    email: string,
+  ): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { email },
     });
   }
 
-  async findById(id: number): Promise<User | null> {
+  async findById(
+    id: number,
+  ): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { id },
     });
@@ -28,13 +32,18 @@ export class UsersService {
     email: string;
     passwordHash: string;
   }): Promise<User> {
-    const user = this.usersRepository.create({
-      name: data.name,
-      email: data.email,
-      passwordHash: data.passwordHash,
-      role: 'HR',
-    });
+    const user =
+      this.usersRepository.create({
+        name: data.name,
+        email: data.email,
+        passwordHash: data.passwordHash,
+        role: 'HR',
+      });
 
+    return this.usersRepository.save(user);
+  }
+
+  async save(user: User): Promise<User> {
     return this.usersRepository.save(user);
   }
 
