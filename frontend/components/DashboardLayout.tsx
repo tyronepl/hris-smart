@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   UsersRound,
   UserPlus,
+  CalendarDays,
   LogOut,
   Settings,
 } from "lucide-react";
@@ -56,6 +57,11 @@ export default function DashboardLayout({
       label: "Employees",
       href: "/employees",
       icon: UsersRound,
+    },
+    {
+      label: "Calendar",
+      href: "/calendar",
+      icon: CalendarDays,
     },
     // {
     //   label: "Add Employee",
