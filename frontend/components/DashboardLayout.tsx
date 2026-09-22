@@ -8,6 +8,7 @@ import {
   UsersRound,
   UserPlus,
   CalendarDays,
+  ClipboardList,
   LogOut,
   Settings,
 } from "lucide-react";
@@ -62,6 +63,11 @@ export default function DashboardLayout({
       label: "Calendar",
       href: "/calendar",
       icon: CalendarDays,
+    },
+    {
+      label: "Leave Management",
+      href: "/leaves",
+      icon: ClipboardList,
     },
     // {
     //   label: "Add Employee",
