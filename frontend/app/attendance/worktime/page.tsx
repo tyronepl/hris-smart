@@ -1,12 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  CalendarDays,
-  Clock3,
-  Search,
-  Users,
-} from "lucide-react";
 
 import DashboardLayout from "../../../components/DashboardLayout";
 import { API_URL } from "../../../lib/api";
@@ -36,20 +30,29 @@ type Attendance = {
 };
 
 export default function WorkTimePage() {
-  const [attendance, setAttendance] = useState<Attendance[]>([]);
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [attendance, setAttendance] =
+    useState<Attendance[]>([]);
+
+  const [employees, setEmployees] =
+    useState<Employee[]>([]);
+
   const [selectedEmployee, setSelectedEmployee] =
     useState("ALL");
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date().toISOString().slice(0, 7),
-  );
+
+  const [selectedMonth, setSelectedMonth] =
+    useState(
+      new Date().toISOString().slice(0, 7),
+    );
+
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
   const getToken = () =>
     localStorage.getItem("accessToken");
 
-  const getEmployeeName = (employeeId: number) => {
+  const getEmployeeName = (
+    employeeId: number,
+  ) => {
     const employee = employees.find(
       (item) => item.id === employeeId,
     );
@@ -75,19 +78,22 @@ export default function WorkTimePage() {
     try {
       const token = getToken();
 
-      const [attendanceResponse, employeesResponse] =
-        await Promise.all([
-          fetch(`${API_URL}/attendance`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-          fetch(`${API_URL}/employees`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
+      const [
+        attendanceResponse,
+        employeesResponse,
+      ] = await Promise.all([
+        fetch(`${API_URL}/attendance`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+
+        fetch(`${API_URL}/employees`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+      ]);
 
       if (!attendanceResponse.ok) {
         throw new Error(
@@ -112,7 +118,9 @@ export default function WorkTimePage() {
     } catch (error) {
       console.error(error);
 
-      alert("Failed to load work time data.");
+      alert(
+        "Failed to load work time data.",
+      );
     } finally {
       setLoading(false);
     }
@@ -296,24 +304,17 @@ export default function WorkTimePage() {
                 Search
               </label>
 
-              <div className="relative">
-                <Search
-                  size={18}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-black"
-                />
-
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(event) =>
-                    setSearch(
-                      event.target.value,
-                    )
-                  }
-                  placeholder="Search employee or date..."
-                  className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 text-sm text-black outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
+              <input
+                type="text"
+                value={search}
+                onChange={(event) =>
+                  setSearch(
+                    event.target.value,
+                  )
+                }
+                placeholder="Search employee or date..."
+                className="w-full rounded-lg border border-gray-300 py-2 px-3 text-sm text-black outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
             </div>
           </div>
         </div>
@@ -321,66 +322,39 @@ export default function WorkTimePage() {
         {/* Summary Cards */}
         <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border bg-white p-5 shadow-sm">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="rounded-lg bg-blue-100 p-2">
-                <Clock3
-                  size={20}
-                  className="text-blue-600"
-                />
-              </div>
+            <p className="text-xs font-medium text-black">
+              Total Hours Worked
+            </p>
 
-              <span className="text-xs font-medium text-black">
-                Total
-              </span>
-            </div>
-
-            <p className="text-2xl font-bold text-black">
+            <p className="mt-3 text-2xl font-bold text-black">
               {totalHours.toFixed(2)}
             </p>
 
             <p className="mt-1 text-sm text-black">
-              Hours worked
+              Total hours worked
             </p>
           </div>
 
           <div className="rounded-xl border bg-white p-5 shadow-sm">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="rounded-lg bg-indigo-100 p-2">
-                <CalendarDays
-                  size={20}
-                  className="text-indigo-600"
-                />
-              </div>
+            <p className="text-xs font-medium text-black">
+              Average Hours
+            </p>
 
-              <span className="text-xs font-medium text-black">
-                Average
-              </span>
-            </div>
-
-            <p className="text-2xl font-bold text-black">
+            <p className="mt-3 text-2xl font-bold text-black">
               {averageHours.toFixed(2)}
             </p>
 
             <p className="mt-1 text-sm text-black">
-              Hours per record
+              Average hours per record
             </p>
           </div>
 
           <div className="rounded-xl border bg-white p-5 shadow-sm">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="rounded-lg bg-green-100 p-2">
-                <Users
-                  size={20}
-                  className="text-green-600"
-                />
-              </div>
+            <p className="text-xs font-medium text-black">
+              Present
+            </p>
 
-              <span className="text-xs font-medium text-black">
-                Present
-              </span>
-            </div>
-
-            <p className="text-2xl font-bold text-black">
+            <p className="mt-3 text-2xl font-bold text-black">
               {presentCount}
             </p>
 
@@ -390,20 +364,11 @@ export default function WorkTimePage() {
           </div>
 
           <div className="rounded-xl border bg-white p-5 shadow-sm">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="rounded-lg bg-yellow-100 p-2">
-                <Clock3
-                  size={20}
-                  className="text-yellow-600"
-                />
-              </div>
+            <p className="text-xs font-medium text-black">
+              Late
+            </p>
 
-              <span className="text-xs font-medium text-black">
-                Late
-              </span>
-            </div>
-
-            <p className="text-2xl font-bold text-black">
+            <p className="mt-3 text-2xl font-bold text-black">
               {lateCount}
             </p>
 
