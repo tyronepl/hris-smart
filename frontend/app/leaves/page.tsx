@@ -809,10 +809,7 @@ export default function LeavesPage() {
                         key={employee.id}
                         value={employee.id}
                       >
-                        {getEmployeeName(
-                          employee,
-                        )}{" "}
-                        - #{employee.id}
+                        {getEmployeeName(employee)}
                       </option>
                     ),
                   )}

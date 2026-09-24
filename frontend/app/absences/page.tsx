@@ -697,13 +697,7 @@ export default function AbsencesPage() {
                           employee.id
                         }
                       >
-                        {getEmployeeName(
-                          employee,
-                        )}{" "}
-                        - #
-                        {
-                          employee.id
-                        }
+                        {getEmployeeName(employee)}
                       </option>
                     ),
                   )}
