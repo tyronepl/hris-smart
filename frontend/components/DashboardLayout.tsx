@@ -9,6 +9,7 @@ import {
   CalendarDays,
   ClipboardList,
   ClipboardX,
+  Clock3,
   LogOut,
   Settings,
 } from "lucide-react";
@@ -58,6 +59,11 @@ export default function DashboardLayout({
       label: "Employees",
       href: "/employees",
       icon: UsersRound,
+    },
+    {
+      label: "Overtime Management",
+      href: "/overtime",
+      icon: Clock3,
     },
     {
       label: "Leave Management",
