@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { EmployeesModule } from './employees/employees.module';
 import { CalendarModule } from './calendar/calendar.module';
 import { LeavesModule } from './leaves/leaves.module';
+import { OvertimeModule } from './overtime/overtime.module';
 
 @Module({
   imports: [
@@ -30,12 +31,13 @@ import { LeavesModule } from './leaves/leaves.module';
       }),
     }),
 
-    AbsencesModule,
     AuthModule,
     UsersModule,
     EmployeesModule,
     CalendarModule,
     LeavesModule,
+    AbsencesModule,
+    OvertimeModule,
   ],
 })
 export class AppModule {}
