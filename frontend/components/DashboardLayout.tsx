@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   UsersRound,
-  UserPlus,
   CalendarDays,
   ClipboardList,
+  ClipboardX,
   LogOut,
   Settings,
 } from "lucide-react";
@@ -65,15 +65,15 @@ export default function DashboardLayout({
       icon: ClipboardList,
     },
     {
+      label: "Absence Management",
+      href: "/absences",
+      icon: ClipboardX,
+    },
+    {
       label: "Calendar",
       href: "/calendar",
       icon: CalendarDays,
     },
-    // {
-    //   label: "Add Employee",
-    //   href: "/employees?create=true",
-    //   icon: UserPlus,
-    // },
     {
       label: "Account Settings",
       href: "/settings",
