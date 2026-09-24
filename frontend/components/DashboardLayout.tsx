@@ -12,6 +12,10 @@ import {
   Clock3,
   LogOut,
   Settings,
+  UserCheck,
+  Clock,
+  CalendarRange,
+  ChevronDown,
 } from "lucide-react";
 
 export default function DashboardLayout({
@@ -22,7 +26,14 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
 
-  const [userName, setUserName] = useState("HR Administrator");
+  const [userName, setUserName] = useState(
+    "HR Administrator",
+  );
+
+  const [attendanceOpen, setAttendanceOpen] =
+    useState(
+      pathname.startsWith("/attendance"),
+    );
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -41,6 +52,12 @@ export default function DashboardLayout({
       localStorage.removeItem("user");
     }
   }, []);
+
+  useEffect(() => {
+    if (pathname.startsWith("/attendance")) {
+      setAttendanceOpen(true);
+    }
+  }, [pathname]);
 
   function handleLogout() {
     localStorage.removeItem("accessToken");
@@ -133,36 +150,222 @@ export default function DashboardLayout({
       {/* Sidebar */}
       <aside className="fixed bottom-0 left-0 top-16 z-40 flex w-64 flex-col bg-blue-700 text-white">
 
-        <nav className="flex-1 space-y-1 px-3 py-6">
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-6">
 
-          {menuItems.map((item) => {
-            const Icon = item.icon;
+          {/* Dashboard */}
+          <Link
+            href="/dashboard"
+            className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
+              pathname === "/dashboard"
+                ? "bg-white text-blue-700"
+                : "text-blue-100 hover:bg-blue-600 hover:text-white"
+            }`}
+          >
+            <LayoutDashboard size={20} />
 
-            const basePath = item.href.split("?")[0];
+            <span>
+              Dashboard
+            </span>
+          </Link>
 
-            const active =
-              pathname === basePath ||
-              (basePath !== "/dashboard" &&
-                pathname.startsWith(`${basePath}/`));
+          {/* Employees */}
+          <Link
+            href="/employees"
+            className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
+              pathname === "/employees" ||
+              pathname.startsWith("/employees/")
+                ? "bg-white text-blue-700"
+                : "text-blue-100 hover:bg-blue-600 hover:text-white"
+            }`}
+          >
+            <UsersRound size={20} />
 
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
-                  active
-                    ? "bg-white text-blue-700"
-                    : "text-blue-100 hover:bg-blue-600 hover:text-white"
-                }`}
-              >
-                <Icon size={20} />
+            <span>
+              Employees
+            </span>
+          </Link>
+
+          {/* Attendance */}
+          <div>
+            <button
+              type="button"
+              onClick={() =>
+                setAttendanceOpen(
+                  (current) => !current,
+                )
+              }
+              className={`flex w-full items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition ${
+                pathname.startsWith(
+                  "/attendance",
+                )
+                  ? "bg-white text-blue-700"
+                  : "text-blue-100 hover:bg-blue-600 hover:text-white"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <UserCheck size={20} />
 
                 <span>
-                  {item.label}
+                  Attendance
                 </span>
-              </Link>
-            );
-          })}
+              </div>
+
+              <ChevronDown
+                size={18}
+                className={`transition-transform ${
+                  attendanceOpen
+                    ? "rotate-180"
+                    : ""
+                }`}
+              />
+            </button>
+
+            {attendanceOpen && (
+              <div className="mt-1 space-y-1 pl-4">
+
+                {/* Attendance List */}
+                <Link
+                  href="/attendance"
+                  className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition ${
+                    pathname ===
+                    "/attendance"
+                      ? "bg-white text-blue-700"
+                      : "text-blue-100 hover:bg-blue-600 hover:text-white"
+                  }`}
+                >
+                  <UserCheck size={17} />
+
+                  <span>
+                    Attendance List
+                  </span>
+                </Link>
+
+                {/* Work Time */}
+                <Link
+                  href="/attendance/worktime"
+                  className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition ${
+                    pathname.startsWith(
+                      "/attendance/worktime",
+                    )
+                      ? "bg-white text-blue-700"
+                      : "text-blue-100 hover:bg-blue-600 hover:text-white"
+                  }`}
+                >
+                  <Clock size={17} />
+
+                  <span>
+                    Work Time
+                  </span>
+                </Link>
+
+                {/* Employee Calendar */}
+                <Link
+                  href="/attendance/calendar"
+                  className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition ${
+                    pathname.startsWith(
+                      "/attendance/calendar",
+                    )
+                      ? "bg-white text-blue-700"
+                      : "text-blue-100 hover:bg-blue-600 hover:text-white"
+                  }`}
+                >
+                  <CalendarRange
+                    size={17}
+                  />
+
+                  <span>
+                    Employee Calendar
+                  </span>
+                </Link>
+
+              </div>
+            )}
+          </div>
+
+          {/* Overtime */}
+          <Link
+            href="/overtime"
+            className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
+              pathname === "/overtime" ||
+              pathname.startsWith("/overtime/")
+                ? "bg-white text-blue-700"
+                : "text-blue-100 hover:bg-blue-600 hover:text-white"
+            }`}
+          >
+            <Clock3 size={20} />
+
+            <span>
+              Overtime Management
+            </span>
+          </Link>
+
+          {/* Leave */}
+          <Link
+            href="/leaves"
+            className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
+              pathname === "/leaves" ||
+              pathname.startsWith("/leaves/")
+                ? "bg-white text-blue-700"
+                : "text-blue-100 hover:bg-blue-600 hover:text-white"
+            }`}
+          >
+            <ClipboardList size={20} />
+
+            <span>
+              Leave Management
+            </span>
+          </Link>
+
+          {/* Absence */}
+          <Link
+            href="/absences"
+            className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
+              pathname === "/absences" ||
+              pathname.startsWith("/absences/")
+                ? "bg-white text-blue-700"
+                : "text-blue-100 hover:bg-blue-600 hover:text-white"
+            }`}
+          >
+            <ClipboardX size={20} />
+
+            <span>
+              Absence Management
+            </span>
+          </Link>
+
+          {/* Calendar */}
+          <Link
+            href="/calendar"
+            className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
+              pathname === "/calendar" ||
+              pathname.startsWith("/calendar/")
+                ? "bg-white text-blue-700"
+                : "text-blue-100 hover:bg-blue-600 hover:text-white"
+            }`}
+          >
+            <CalendarDays size={20} />
+
+            <span>
+              Calendar
+            </span>
+          </Link>
+
+          {/* Account Settings */}
+          <Link
+            href="/settings"
+            className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
+              pathname === "/settings" ||
+              pathname.startsWith("/settings/")
+                ? "bg-white text-blue-700"
+                : "text-blue-100 hover:bg-blue-600 hover:text-white"
+            }`}
+          >
+            <Settings size={20} />
+
+            <span>
+              Account Settings
+            </span>
+          </Link>
 
         </nav>
 
