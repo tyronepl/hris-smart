@@ -60,14 +60,14 @@ export default function DashboardLayout({
       icon: UsersRound,
     },
     {
-      label: "Calendar",
-      href: "/calendar",
-      icon: CalendarDays,
-    },
-    {
       label: "Leave Management",
       href: "/leaves",
       icon: ClipboardList,
+    },
+    {
+      label: "Calendar",
+      href: "/calendar",
+      icon: CalendarDays,
     },
     // {
     //   label: "Add Employee",

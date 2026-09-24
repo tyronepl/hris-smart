@@ -554,7 +554,7 @@ export default function LeavesPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6">
+  
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-black">
@@ -761,7 +761,7 @@ export default function LeavesPage() {
             </table>
           )}
         </div>
-      </div>
+      
 
       {modalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4">

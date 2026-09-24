@@ -495,7 +495,6 @@ export default function CalendarPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gray-50 p-6">
         {/* Header */}
         <div className="mb-5 flex items-center justify-between">
           <div>
@@ -505,12 +504,12 @@ export default function CalendarPage() {
                 size={26}
               />
 
-              <h1 className="text-2xl font-bold text-gray-800">
+              <h1 className="text-2xl font-bold text-black">
                 Calendar {year}
               </h1>
             </div>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-black">
               Manage events, holidays,
               and office working days.
             </p>
@@ -678,7 +677,6 @@ export default function CalendarPage() {
               </div>
             </div>
           )}
-      </div>
     </DashboardLayout>
   );
 }

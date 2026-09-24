@@ -208,15 +208,11 @@ export default function SettingsPage() {
   return (
     <DashboardLayout>
       <div className="mb-8">
-        <p className="text-sm font-medium text-blue-600">
-          Account
-        </p>
-
-        <h2 className="mt-1 text-3xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-black">
           Account Settings
-        </h2>
+        </h1>
 
-        <p className="mt-2 text-gray-500">
+        <p className="mt-1 text-sm text-black">
           Manage your HR administrator account.
         </p>
       </div>

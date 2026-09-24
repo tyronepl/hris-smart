@@ -763,17 +763,13 @@ export default function EmployeesPage() {
           PAGE HEADER
       ========================= */}
 
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-blue-600">
-            HR Management
-          </p>
-
-          <h2 className="mt-1 text-3xl font-bold text-gray-900">
+      <div className="mb-6 flex items-center justify-between">
+          <div>
+          <h1 className="text-2xl font-bold text-black">
             Employees
-          </h2>
+          </h1>
 
-          <p className="mt-2 text-gray-500">
+          <p className="mt-1 text-sm text-black">
             Manage employee records and resumes.
           </p>
         </div>
