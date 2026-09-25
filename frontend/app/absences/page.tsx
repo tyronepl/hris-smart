@@ -570,13 +570,6 @@ export default function AbsencesPage() {
                             absence.employeeId,
                           )}
                         </div>
-
-                        <div className="text-xs text-black">
-                          #
-                          {
-                            absence.employeeId
-                          }
-                        </div>
                       </td>
 
                       <td className="px-4 py-4 text-sm text-black">

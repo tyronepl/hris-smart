@@ -634,10 +634,6 @@ export default function LeavesPage() {
                           leave.employeeId,
                         )}
                       </div>
-
-                      <div className="text-xs text-black">
-                        #{leave.employeeId}
-                      </div>
                     </td>
 
                     <td className="px-4 py-4">
