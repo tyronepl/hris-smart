@@ -2,9 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Employee } from '../../employees/entities/employee.entity';
 
 @Entity('payrolls')
 export class Payroll {
@@ -13,6 +17,12 @@ export class Payroll {
 
   @Column()
   employeeId: number;
+
+  @ManyToOne(() => Employee, (employee) => employee.payrolls, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'employeeId' })
+  employee: Employee;
 
   @Column({ type: 'date' })
   periodStart: string;

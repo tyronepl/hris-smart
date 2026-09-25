@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Payroll } from '../../payroll/entities/payroll.entity';
 
 @Entity('employees')
 export class Employee {
@@ -49,6 +52,9 @@ export class Employee {
 
   @Column({ nullable: true, type: 'longtext' })
   resumeText: string;
+
+  @OneToMany(() => Payroll, (payroll) => payroll.employee)
+  payrolls: Payroll[];
 
   @CreateDateColumn()
   createdAt: Date;
