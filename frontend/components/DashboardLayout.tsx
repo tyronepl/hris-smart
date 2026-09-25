@@ -16,6 +16,7 @@ import {
   Clock,
   CalendarRange,
   ChevronDown,
+  WalletCards,
 } from "lucide-react";
 
 export default function DashboardLayout({
@@ -65,44 +66,6 @@ export default function DashboardLayout({
 
     router.push("/login");
   }
-
-  const menuItems = [
-    {
-      label: "Dashboard",
-      href: "/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      label: "Employees",
-      href: "/employees",
-      icon: UsersRound,
-    },
-    {
-      label: "Overtime Management",
-      href: "/overtime",
-      icon: Clock3,
-    },
-    {
-      label: "Leave Management",
-      href: "/leaves",
-      icon: ClipboardList,
-    },
-    {
-      label: "Absence Management",
-      href: "/absences",
-      icon: ClipboardX,
-    },
-    {
-      label: "Calendar",
-      href: "/calendar",
-      icon: CalendarDays,
-    },
-    {
-      label: "Account Settings",
-      href: "/settings",
-      icon: Settings,
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -182,6 +145,23 @@ export default function DashboardLayout({
 
             <span>
               Employees
+            </span>
+          </Link>
+
+          {/* Payroll */}
+          <Link
+            href="/payroll"
+            className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
+              pathname === "/payroll" ||
+              pathname.startsWith("/payroll/")
+                ? "bg-white text-blue-700"
+                : "text-blue-100 hover:bg-blue-600 hover:text-white"
+            }`}
+          >
+            <WalletCards size={20} />
+
+            <span>
+              Payroll
             </span>
           </Link>
 
