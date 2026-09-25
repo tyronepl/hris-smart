@@ -785,26 +785,24 @@ export default function EmployeesPage() {
       </div>
 
       {/* =========================
-          SEARCH
+          SEARCH / FILTER
       ========================= */}
 
-      <div className="mb-4 flex justify-end">
-        <div className="relative w-full sm:w-80">
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="relative w-full">
           <Search
             size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
           />
 
           <input
             type="text"
             value={search}
             onChange={(event) =>
-              setSearch(
-                event.target.value,
-              )
+              setSearch(event.target.value)
             }
-            placeholder="Search employees..."
-            className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-black outline-none placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            placeholder="Search by name, email, position, or department..."
+            className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-black outline-none placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
           />
         </div>
       </div>
