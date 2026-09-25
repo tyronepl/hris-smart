@@ -118,14 +118,7 @@ function formatDate(value: string | null) {
     return "-";
   }
 
-  return new Date(value).toLocaleDateString(
-    "en-PH",
-    {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    },
-  );
+  return value.slice(0, 10);
 }
 
 function getEmployeeName(
