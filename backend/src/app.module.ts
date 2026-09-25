@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { PayrollModule } from './payroll/payroll.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -13,12 +14,14 @@ import { OvertimeModule } from './overtime/overtime.module';
 
 @Module({
   imports: [
+    PayrollModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
 
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [
+    PayrollModule,ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
