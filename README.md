@@ -1,252 +1,256 @@
 # HRIS Smart
 
-An AI-powered Human Resource Information System (HRIS) for managing employee records and resumes.
+An AI-powered Human Resource Information System (HRIS) for managing employees, attendance, leave, overtime, payroll, resumes, and HR operations.
 
-The system provides employee CRUD operations, resume uploads, and AI-assisted resume parsing to automatically extract employee information.
+HRIS Smart provides a centralized web-based platform for HR teams to manage employee records and automate common HR processes. It also includes AI-assisted resume parsing using n8n and Ollama to extract structured employee information from uploaded resumes.
+
+---
 
 ## Features
 
-* Employee management
+### Employee Management
 
-  * Create employees
-  * View employee details
-  * Update employee information
-  * Delete employees
-  * Search employees
-* Resume management
+- Create employee records
+- View employee details
+- Update employee information
+- Delete employees
+- Search and filter employees
+- Upload employee resumes
+- View stored resume information
 
-  * Upload PDF and DOCX resumes
-  * Store employee resumes
-  * Extract text from resumes
-* AI resume parsing
+### Resume Management
 
-  * Automatically extract information from resumes
-  * Populate employee fields from parsed resume data
-* Authentication
+- Upload PDF and DOCX resumes
+- Resume file validation
+- Resume text extraction
+- Store employee resumes
+- AI-assisted resume parsing
+- Automatically populate employee information from parsed resumes
 
-  * JWT-based API authentication
-* Responsive web interface
+### AI Resume Parsing
+
+- Extract structured information from resumes
+- Parse:
+  - Name
+  - Contact information
+  - Address
+  - Skills
+  - Work experience
+  - Education
+- Uses n8n for workflow automation
+- Uses Ollama for local AI processing
+
+### Authentication
+
+- JWT-based authentication
+- Protected API endpoints
+- HR user registration and login
+- Account profile management
+- Password change
+
+### Attendance Management
+
+- Create attendance records
+- View attendance records
+- Update attendance records
+- Delete attendance records
+- Employee attendance history
+- Employee attendance calendar
+- Attendance statuses:
+  - Present
+  - Late
+  - Absent
+
+### Leave Management
+
+- Create leave requests
+- View leave requests
+- Update leave status
+- Approve leave requests
+- Reject leave requests
+- Cancel leave requests
+- Delete leave requests
+- Leave types:
+  - Vacation
+  - Sick
+  - Emergency
+  - Other
+- Automatic calculation of leave days
+
+### Absence Management
+
+- Create absence records
+- View absence records
+- Update absence records
+- Delete absence records
+- Employee-specific absence records
+
+> Absence Management is currently maintained separately from Attendance. Approved absences can be integrated with Attendance in the future without duplicating absence records.
+
+### Overtime Management
+
+- Create overtime records
+- View overtime records
+- Update overtime records
+- Approve overtime
+- Reject overtime
+- Delete overtime records
+- Employee-specific overtime records
+
+### Payroll Management
+
+- Create payroll records
+- View payroll records
+- Approve payroll
+- Mark payroll as paid
+- Delete payroll records
+- Automatic payroll calculations
+- Gross pay calculation
+- Overtime pay
+- Holiday pay
+- Night differential
+- Allowances
+- Bonuses
+- Statutory deductions
+- Other deductions
+- Net pay calculation
+- Generate downloadable PDF payslips
+
+### Calendar
+
+- Create calendar events
+- View calendar events
+- Update calendar events
+- Delete calendar events
+- View events by year
+
+### Audit Logs
+
+- Track important HR system activities
+- Record create, update, delete, approve, reject, cancel, and payment actions
+- Track authentication activities
+- Track employee resume uploads
+- View audit history
+- Filter audit logs by:
+  - User
+  - Employee
+  - Action
+  - Module
+  - Description
+- View detailed audit log information
+
+### Dashboard
+
+- Total employee count
+- Present employees
+- Late employees
+- Absent employees
+- Pending leave requests
+- Pending overtime requests
+- Payroll summary
+- Attendance overview
+- Leave request statistics
+- Payroll overview
+- Recent HR activities
+
+### Responsive Web Interface
+
+- Responsive dashboard
+- Sidebar navigation
+- Search and filtering
+- Modal-based forms
+- Data tables
+- Employee management interface
+- HR dashboard and analytics
+
+---
 
 ## Tech Stack
 
 ### Frontend
 
-* Next.js
-* React
-* TypeScript
-* Tailwind CSS
-* Axios
-* Lucide React
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Axios
+- Lucide React
+- Recharts
 
 ### Backend
 
-* NestJS
-* TypeScript
-* REST API
-* JWT Authentication
-* Multer
-* PDF Parse
-* Mammoth
+- NestJS
+- TypeScript
+- REST API
+- JWT Authentication
+- Passport
+- TypeORM
+- Multer
+- PDF Parse
+- Mammoth
+- PDFKit
 
 ### AI / Automation
 
-* n8n
-* Ollama
-* AI-powered resume processing
+- n8n
+- Ollama
+- AI-powered resume processing
 
 ### Database
 
-* MySQL
+- MySQL
+
+### Infrastructure
+
+- Docker
+- Docker Compose
+- Linux
+- Nginx
+- AWS-compatible deployment environment
+
+---
 
 ## Project Structure
 
 ```text
 hris-smart/
-├── frontend/
-│   └── app/
-│       └── employees/
-│           ├── page.tsx
-│           └── components/
-│               ├── EmployeeViewModal.tsx
-│               ├── EmployeeFormModal.tsx
-│               └── EmployeeTable.tsx
 │
-└── backend/
-    ├── src/
-    │   ├── employees/
-    │   ├── auth/
-    │   └── ...
-    └── uploads/
-        └── resumes/
-```
-
-## Requirements
-
-Make sure the following are installed:
-
-* Node.js 20+
-* npm
-* MySQL
-* n8n
-* Ollama
-
-## Installation
-
-Clone the repository:
-
-```bash
-git clone <repository-url>
-cd hris-smart
-```
-
-### Backend
-
-```bash
-cd backend
-npm install
-```
-
-Create a `.env` file and configure the required environment variables.
-
-Example:
-
-```env
-DATABASE_HOST=localhost
-DATABASE_PORT=3306
-DATABASE_USERNAME=root
-DATABASE_PASSWORD=your_password
-DATABASE_NAME=hris
-
-JWT_SECRET=your_jwt_secret
-
-N8N_WEBHOOK_URL=http://localhost:5678/webhook/resume-autofill
-```
-
-Start the backend:
-
-```bash
-npm run start:dev
-```
-
-The API will run on:
-
-```text
-http://localhost:3000
-```
-
-### Frontend
-
-Open another terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-The frontend will run on:
-
-```text
-http://localhost:3001
-```
-
-## Resume Processing Flow
-
-The resume processing workflow works as follows:
-
-```text
-User uploads resume
-        ↓
-Frontend sends resume to NestJS
-        ↓
-NestJS extracts resume text
-        ↓
-NestJS sends extracted text to n8n
-        ↓
-n8n processes the resume using AI
-        ↓
-Structured employee information is returned
-        ↓
-Frontend automatically fills employee fields
-        ↓
-User reviews the information
-        ↓
-Employee record is saved
-```
-
-## Supported Resume Formats
-
-AI resume parsing supports:
-
-* PDF
-* DOCX
-
-Maximum AI parsing file size:
-
-```text
-10 MB
-```
-
-Resume storage uploads are limited to:
-
-```text
-5 MB
-```
-
-## API Endpoints
-
-### Employees
-
-| Method | Endpoint                  | Description               |
-| ------ | ------------------------- | ------------------------- |
-| GET    | `/employees`              | Get all employees         |
-| GET    | `/employees/:id`          | Get an employee           |
-| POST   | `/employees`              | Create an employee        |
-| PATCH  | `/employees/:id`          | Update an employee        |
-| DELETE | `/employees/:id`          | Delete an employee        |
-| POST   | `/employees/resume/parse` | Parse a resume with AI    |
-| POST   | `/employees/:id/resume`   | Upload an employee resume |
-
-All employee endpoints require JWT authentication.
-
-## Security
-
-* JWT authentication for protected API endpoints
-* File type validation for resume uploads
-* File size limits
-* Server-side validation
-* Resume files stored outside the frontend application
-
-## Development
-
-Run the backend:
-
-```bash
-cd backend
-npm run start:dev
-```
-
-Run the frontend:
-
-```bash
-cd frontend
-npm run dev
-```
-
-Make sure MySQL, n8n, and Ollama are running before testing the complete resume-processing workflow.
-
-## Future Improvements
-
-* Employee profile photos
-* Role-based access control
-* Employee dashboard and analytics
-* Resume version history
-* Advanced employee filtering
-* AI-powered candidate matching
-* Automated interview question generation
-* Email notifications
-* Cloud storage integration
-
-## License
-
-This project is for demonstration and development purposes.
+├── frontend/
+│   ├── app/
+│   │   ├── components/
+│   │   │   └── DashboardLayout/
+│   │   │
+│   │   ├── dashboard/
+│   │   ├── employees/
+│   │   ├── attendance/
+│   │   ├── leaves/
+│   │   ├── absences/
+│   │   ├── overtime/
+│   │   ├── payroll/
+│   │   ├── calendar/
+│   │   ├── audit-logs/
+│   │   ├── account-settings/
+│   │   └── login/
+│   │
+│   └── ...
+│
+├── backend/
+│   ├── src/
+│   │   ├── auth/
+│   │   ├── employees/
+│   │   ├── attendance/
+│   │   ├── leaves/
+│   │   ├── absences/
+│   │   ├── overtime/
+│   │   ├── payroll/
+│   │   ├── calendar/
+│   │   ├── audit-logs/
+│   │   └── ...
+│   │
+│   ├── uploads/
+│   │   └── resumes/
+│   │
+│   └── ...
+│
+├── docker-compose.yml
+└── README.md
