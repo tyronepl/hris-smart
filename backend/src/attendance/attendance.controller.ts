@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AuditLogsService } from '../audit-logs/audit-logs.service';
 
 import {
   AttendanceService,
@@ -30,16 +31,28 @@ import {
 export class AttendanceController {
   constructor(
     private readonly attendanceService: AttendanceService,
+    private readonly auditLogsService: AuditLogsService,
   ) {}
 
   @Post()
-  create(
+  async create(
     @Body()
     createAttendanceDto: CreateAttendanceDto,
   ) {
-    return this.attendanceService.create(
-      createAttendanceDto,
-    );
+    const attendance =
+      await this.attendanceService.create(
+        createAttendanceDto,
+      );
+
+    await this.auditLogsService.create({
+      action: 'CREATE',
+      module: 'ATTENDANCE',
+      recordId: attendance.id,
+      description: `Created attendance record for employee ${attendance.employeeId}`,
+      newData: attendance,
+    });
+
+    return attendance;
   }
 
   @Get()
@@ -97,7 +110,7 @@ export class AttendanceController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param(
       'id',
       ParseIntPipe,
@@ -107,22 +120,41 @@ export class AttendanceController {
     @Body()
     updateAttendanceDto: UpdateAttendanceDto,
   ) {
-    return this.attendanceService.update(
-      id,
-      updateAttendanceDto,
-    );
+    const attendance =
+      await this.attendanceService.update(
+        id,
+        updateAttendanceDto,
+      );
+
+    await this.auditLogsService.create({
+      action: 'UPDATE',
+      module: 'ATTENDANCE',
+      recordId: id,
+      description: `Updated attendance record`,
+      newData: attendance,
+    });
+
+    return attendance;
   }
 
   @Delete(':id')
-  remove(
+  async remove(
     @Param(
       'id',
       ParseIntPipe,
     )
     id: number,
   ) {
-    return this.attendanceService.remove(
-      id,
-    );
+    const result =
+      await this.attendanceService.remove(id);
+
+    await this.auditLogsService.create({
+      action: 'DELETE',
+      module: 'ATTENDANCE',
+      recordId: id,
+      description: `Deleted attendance record`,
+    });
+
+    return result;
   }
 }

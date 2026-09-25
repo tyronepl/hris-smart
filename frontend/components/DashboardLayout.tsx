@@ -17,6 +17,7 @@ import {
   CalendarRange,
   ChevronDown,
   WalletCards,
+  ScrollText,
 } from "lucide-react";
 
 export default function DashboardLayout({
@@ -327,6 +328,23 @@ export default function DashboardLayout({
 
             <span>
               Calendar
+            </span>
+          </Link>
+
+          {/* Audit Logs */}
+          <Link
+            href="/audit-logs"
+            className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
+              pathname === "/audit-logs" ||
+              pathname.startsWith("/audit-logs/")
+                ? "bg-white text-blue-700"
+                : "text-blue-100 hover:bg-blue-600 hover:text-white"
+            }`}
+          >
+            <ScrollText size={20} />
+
+            <span>
+              Audit Logs
             </span>
           </Link>
 

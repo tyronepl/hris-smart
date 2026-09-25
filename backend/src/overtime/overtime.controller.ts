@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AuditLogsService } from '../audit-logs/audit-logs.service';
 
 import {
   OvertimeService,
@@ -33,16 +34,28 @@ import {
 export class OvertimeController {
   constructor(
     private readonly overtimeService: OvertimeService,
+    private readonly auditLogsService: AuditLogsService,
   ) {}
 
   @Post()
-  create(
+  async create(
     @Body()
     createOvertimeDto: CreateOvertimeDto,
   ) {
-    return this.overtimeService.create(
-      createOvertimeDto,
-    );
+    const overtime =
+      await this.overtimeService.create(
+        createOvertimeDto,
+      );
+
+    await this.auditLogsService.create({
+      action: 'CREATE',
+      module: 'OVERTIME',
+      recordId: overtime.id,
+      description: `Created overtime record #${overtime.id} for employee ${overtime.employeeId}`,
+      newData: overtime,
+    });
+
+    return overtime;
   }
 
   @Get()
@@ -72,36 +85,82 @@ export class OvertimeController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe)
     id: number,
+
     @Body()
     updateOvertimeDto: UpdateOvertimeDto,
   ) {
-    return this.overtimeService.update(
-      id,
-      updateOvertimeDto,
-    );
+    const overtime =
+      await this.overtimeService.update(
+        id,
+        updateOvertimeDto,
+      );
+
+    await this.auditLogsService.create({
+      action: 'UPDATE',
+      module: 'OVERTIME',
+      recordId: id,
+      description: `Updated overtime record`,
+      newData: overtime,
+    });
+
+    return overtime;
   }
 
   @Patch(':id/status')
-  updateStatus(
+  async updateStatus(
     @Param('id', ParseIntPipe)
     id: number,
+
     @Body()
     updateStatusDto: UpdateOvertimeStatusDto,
   ) {
-    return this.overtimeService.updateStatus(
-      id,
-      updateStatusDto,
-    );
+    const overtime =
+      await this.overtimeService.updateStatus(
+        id,
+        updateStatusDto,
+      );
+
+    const status =
+      updateStatusDto.status?.toUpperCase();
+
+    let action = 'UPDATE';
+
+    if (status === 'APPROVED') {
+      action = 'APPROVE';
+    } else if (status === 'REJECTED') {
+      action = 'REJECT';
+    }
+
+    await this.auditLogsService.create({
+      action,
+      module: 'OVERTIME',
+      recordId: id,
+      description:
+        `Changed overtime record status to ${status}`,
+      newData: overtime,
+    });
+
+    return overtime;
   }
 
   @Delete(':id')
-  remove(
+  async remove(
     @Param('id', ParseIntPipe)
     id: number,
   ) {
-    return this.overtimeService.remove(id);
+    const result =
+      await this.overtimeService.remove(id);
+
+    await this.auditLogsService.create({
+      action: 'DELETE',
+      module: 'OVERTIME',
+      recordId: id,
+      description: `Deleted overtime record`,
+    });
+
+    return result;
   }
 }

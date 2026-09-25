@@ -12,9 +12,12 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AuditLogsService } from '../audit-logs/audit-logs.service';
+
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeesService } from './employees.service';
@@ -26,6 +29,7 @@ export class EmployeesController {
   constructor(
     private readonly employeesService: EmployeesService,
     private readonly resumeService: ResumeService,
+    private readonly auditLogsService: AuditLogsService,
   ) {}
 
   // =========================
@@ -33,12 +37,25 @@ export class EmployeesController {
   // =========================
 
   @Post()
-  create(
-    @Body() createEmployeeDto: CreateEmployeeDto,
+  async create(
+    @Body()
+    createEmployeeDto: CreateEmployeeDto,
   ) {
-    return this.employeesService.create(
-      createEmployeeDto,
-    );
+    const employee =
+      await this.employeesService.create(
+        createEmployeeDto,
+      );
+
+    await this.auditLogsService.create({
+      action: 'CREATE',
+      module: 'EMPLOYEE',
+      recordId: employee.id,
+      description:
+        `Created employee ${employee.firstName} ${employee.lastName}`,
+      newData: employee,
+    });
+
+    return employee;
   }
 
   // =========================
@@ -80,7 +97,8 @@ export class EmployeesController {
     }),
   )
   async parseResume(
-    @UploadedFile() file: any,
+    @UploadedFile()
+    file: any,
   ) {
     if (!file) {
       throw new BadRequestException(
@@ -99,7 +117,8 @@ export class EmployeesController {
 
   @Get(':id')
   findOne(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe)
+    id: number,
   ) {
     return this.employeesService.findOne(id);
   }
@@ -109,14 +128,29 @@ export class EmployeesController {
   // =========================
 
   @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateEmployeeDto: UpdateEmployeeDto,
+  async update(
+    @Param('id', ParseIntPipe)
+    id: number,
+
+    @Body()
+    updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    return this.employeesService.update(
-      id,
-      updateEmployeeDto,
-    );
+    const employee =
+      await this.employeesService.update(
+        id,
+        updateEmployeeDto,
+      );
+
+    await this.auditLogsService.create({
+      action: 'UPDATE',
+      module: 'EMPLOYEE',
+      recordId: id,
+      description:
+        `Updated employee record`,
+      newData: employee,
+    });
+
+    return employee;
   }
 
   // =========================
@@ -124,10 +158,22 @@ export class EmployeesController {
   // =========================
 
   @Delete(':id')
-  remove(
-    @Param('id', ParseIntPipe) id: number,
+  async remove(
+    @Param('id', ParseIntPipe)
+    id: number,
   ) {
-    return this.employeesService.remove(id);
+    const result =
+      await this.employeesService.remove(id);
+
+    await this.auditLogsService.create({
+      action: 'DELETE',
+      module: 'EMPLOYEE',
+      recordId: id,
+      description:
+        `Deleted employee record`,
+    });
+
+    return result;
   }
 
   // =========================
@@ -160,8 +206,11 @@ export class EmployeesController {
     }),
   )
   async uploadResume(
-    @Param('id', ParseIntPipe) id: number,
-    @UploadedFile() file: any,
+    @Param('id', ParseIntPipe)
+    id: number,
+
+    @UploadedFile()
+    file: any,
   ) {
     if (!file) {
       throw new BadRequestException(
@@ -172,10 +221,26 @@ export class EmployeesController {
     const resumeText =
       await this.resumeService.extractText(file);
 
-    return this.employeesService.updateResume(
-      id,
-      file,
-      resumeText,
-    );
+    const employee =
+      await this.employeesService.updateResume(
+        id,
+        file,
+        resumeText,
+      );
+
+    await this.auditLogsService.create({
+      action: 'RESUME_UPLOAD',
+      module: 'EMPLOYEE',
+      recordId: id,
+      description:
+        `Uploaded resume for employee #${id}`,
+      newData: {
+        fileName: file.originalname,
+        fileType: file.mimetype,
+        fileSize: file.size,
+      },
+    });
+
+    return employee;
   }
 }

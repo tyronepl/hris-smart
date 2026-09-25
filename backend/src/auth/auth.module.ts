@@ -1,16 +1,32 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import {
+  forwardRef,
+  Module,
+} from '@nestjs/common';
+
+import {
+  ConfigModule,
+  ConfigService,
+} from '@nestjs/config';
+
 import { JwtModule } from '@nestjs/jwt';
+
 import { PassportModule } from '@nestjs/passport';
 
 import { UsersModule } from '../users/users.module';
+
+import { AuditLogsModule } from '../audit-logs/audit-logs.module';
+
 import { AuthController } from './auth.controller';
+
 import { AuthService } from './auth.service';
+
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
     UsersModule,
+
+    forwardRef(() => AuditLogsModule),
 
     PassportModule.register({
       defaultStrategy: 'jwt',
@@ -18,19 +34,37 @@ import { JwtStrategy } from './jwt.strategy';
 
     JwtModule.registerAsync({
       imports: [ConfigModule],
+
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+
+      useFactory: (
+        configService: ConfigService,
+      ) => ({
         secret:
-          configService.get<string>('JWT_SECRET') ??
+          configService.get<string>(
+            'JWT_SECRET',
+          ) ??
           'hris-smart-development-secret',
+
         signOptions: {
           expiresIn: '1d',
         },
       }),
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [AuthService, PassportModule],
+
+  controllers: [
+    AuthController,
+  ],
+
+  providers: [
+    AuthService,
+    JwtStrategy,
+  ],
+
+  exports: [
+    AuthService,
+    PassportModule,
+  ],
 })
 export class AuthModule {}

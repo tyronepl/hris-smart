@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
+import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 
 import {
   Leave,
@@ -34,6 +35,7 @@ import {
 @Module({
   imports: [
     AuthModule,
+    AuditLogsModule,
 
     TypeOrmModule.forFeature([
       Attendance,
