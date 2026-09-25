@@ -649,49 +649,51 @@ export default function OvertimePage() {
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex flex-col gap-3 rounded-lg border bg-white p-4 shadow-sm md:flex-row">
-        <input
-          type="text"
-          value={search}
-          onChange={(event) =>
-            setSearch(
-              event.target.value,
-            )
-          }
-          placeholder="Search employee, ID, reason, or date..."
-          className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm text-black outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-        />
+      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm mb-2">
+        <div className="grid gap-4 md:grid-cols-2">
+          <input
+            type="text"
+            value={search}
+            onChange={(event) =>
+              setSearch(
+                event.target.value,
+              )
+            }
+            placeholder="Search employee, ID, reason, or date..."
+            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm text-black outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
 
-        <select
-          value={statusFilter}
-          onChange={(event) =>
-            setStatusFilter(
-              event.target
-                .value as
-                | "ALL"
-                | OvertimeStatus,
-            )
-          }
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-black outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-        >
-          <option value="ALL">
-            All Statuses
-          </option>
+          <select
+            value={statusFilter}
+            onChange={(event) =>
+              setStatusFilter(
+                event.target
+                  .value as
+                  | "ALL"
+                  | OvertimeStatus,
+              )
+            }
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-black outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="ALL">
+              All Statuses
+            </option>
 
-          <option value="PENDING">
-            Pending
-          </option>
+            <option value="PENDING">
+              Pending
+            </option>
 
-          <option value="APPROVED">
-            Approved
-          </option>
+            <option value="APPROVED">
+              Approved
+            </option>
 
-          <option value="REJECTED">
-            Rejected
-          </option>
-        </select>
+            <option value="REJECTED">
+              Rejected
+            </option>
+          </select>
+        </div>
       </div>
-
+    
       {/* Table */}
       <div className="overflow-hidden rounded-lg border bg-white shadow-sm">
         {loading ? (

@@ -105,6 +105,15 @@ export default function LeavesPage() {
   const [rejectionReason, setRejectionReason] =
     useState("");
 
+  const [search, setSearch] =
+    useState("");
+
+  const [statusFilter, setStatusFilter] =
+    useState<"ALL" | LeaveStatus>("ALL");
+
+  const [typeFilter, setTypeFilter] =
+    useState<"ALL" | LeaveType>("ALL");
+
   const fetchEmployees = async () => {
     try {
       const token = getToken();
@@ -552,88 +561,202 @@ export default function LeavesPage() {
     }
   };
 
+  const filteredLeaves = leaves.filter(
+    (leave) => {
+      const employeeName =
+        getEmployeeDisplayName(
+          leave.employeeId,
+        ).toLowerCase();
+
+      const searchTerm =
+        search.toLowerCase().trim();
+
+      const matchesSearch =
+        !searchTerm ||
+        employeeName.includes(searchTerm) ||
+        String(leave.employeeId).includes(
+          searchTerm,
+        ) ||
+        leave.reason
+          .toLowerCase()
+          .includes(searchTerm) ||
+        leave.startDate.includes(searchTerm) ||
+        leave.endDate.includes(searchTerm);
+
+      const matchesStatus =
+        statusFilter === "ALL" ||
+        leave.status === statusFilter;
+
+      const matchesType =
+        typeFilter === "ALL" ||
+        leave.type === typeFilter;
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesType
+      );
+    },
+  );
+
   return (
     <DashboardLayout>
-  
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-black">
-              Leave Management
-            </h1>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-black">
+            Leave Management
+          </h1>
 
-            <p className="mt-1 text-sm text-black">
-              Manage employee leave requests,
-              approvals, and cancellations.
-            </p>
-          </div>
-
-          <button
-            onClick={() => {
-              setForm(initialForm);
-              setModalOpen(true);
-            }}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
-          >
-            <Plus size={18} />
-            Add Leave
-          </button>
+          <p className="mt-1 text-sm text-black">
+            Manage employee leave requests,
+            approvals, and cancellations.
+          </p>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border bg-white shadow-sm">
-          {loading ? (
-            <div className="p-8 text-center text-black">
-              Loading leave requests...
-            </div>
-          ) : leaves.length === 0 ? (
-            <div className="p-8 text-center text-black">
-              No leave requests found.
-            </div>
-          ) : (
-            <table className="min-w-full">
-              <thead className="border-b bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-black">
-                    Employee
-                  </th>
+        <button
+          onClick={() => {
+            setForm(initialForm);
+            setModalOpen(true);
+          }}
+          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+        >
+          <Plus size={18} />
+          Add Leave
+        </button>
+      </div>
 
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-black">
-                    Type
-                  </th>
+      <div className="mb-2 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="grid gap-4 md:grid-cols-3">
+          <input
+            type="text"
+            value={search}
+            onChange={(event) =>
+              setSearch(event.target.value)
+            }
+            placeholder="Search employee, ID, reason, or date..."
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-black outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
 
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-black">
-                    Dates
-                  </th>
+          <select
+            value={statusFilter}
+            onChange={(event) =>
+              setStatusFilter(
+                event.target.value as
+                  | "ALL"
+                  | LeaveStatus,
+              )
+            }
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-black outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="ALL">
+              All Statuses
+            </option>
 
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-black">
-                    Days
-                  </th>
+            <option value="PENDING">
+              Pending
+            </option>
 
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-black">
-                    Reason
-                  </th>
+            <option value="APPROVED">
+              Approved
+            </option>
 
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-black">
-                    Status
-                  </th>
+            <option value="REJECTED">
+              Rejected
+            </option>
 
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-black">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
+            <option value="CANCELLED">
+              Cancelled
+            </option>
+          </select>
 
-              <tbody>
-                {leaves.map((leave) => (
+          <select
+            value={typeFilter}
+            onChange={(event) =>
+              setTypeFilter(
+                event.target.value as
+                  | "ALL"
+                  | LeaveType,
+              )
+            }
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-black outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="ALL">
+              All Leave Types
+            </option>
+
+            <option value="VACATION">
+              Vacation
+            </option>
+
+            <option value="SICK">
+              Sick
+            </option>
+
+            <option value="EMERGENCY">
+              Emergency
+            </option>
+
+            <option value="OTHER">
+              Other
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg border bg-white shadow-sm">
+        {loading ? (
+          <div className="p-8 text-center text-black">
+            Loading leave requests...
+          </div>
+        ) : filteredLeaves.length === 0 ? (
+          <div className="p-8 text-center text-black">
+            No leave requests found.
+          </div>
+        ) : (
+          <table className="min-w-full">
+            <thead className="border-b bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-black">
+                  Employee
+                </th>
+
+                <th className="px-4 py-3 text-left text-sm font-semibold text-black">
+                  Type
+                </th>
+
+                <th className="px-4 py-3 text-left text-sm font-semibold text-black">
+                  Dates
+                </th>
+
+                <th className="px-4 py-3 text-left text-sm font-semibold text-black">
+                  Days
+                </th>
+
+                <th className="px-4 py-3 text-left text-sm font-semibold text-black">
+                  Reason
+                </th>
+
+                <th className="px-4 py-3 text-left text-sm font-semibold text-black">
+                  Status
+                </th>
+
+                <th className="px-4 py-3 text-right text-sm font-semibold text-black">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {filteredLeaves.map(
+                (leave) => (
                   <tr
                     key={leave.id}
                     className="border-b last:border-b-0 hover:bg-gray-50"
                   >
                     <td className="px-4 py-4 text-sm font-medium text-black">
-                      <div>
-                        {getEmployeeDisplayName(
-                          leave.employeeId,
-                        )}
-                      </div>
+                      {getEmployeeDisplayName(
+                        leave.employeeId,
+                      )}
                     </td>
 
                     <td className="px-4 py-4">
@@ -752,12 +875,12 @@ export default function LeavesPage() {
                       </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      
+                ),
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
 
       {modalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4">
@@ -805,7 +928,9 @@ export default function LeavesPage() {
                         key={employee.id}
                         value={employee.id}
                       >
-                        {getEmployeeName(employee)}
+                        {getEmployeeName(
+                          employee,
+                        )}
                       </option>
                     ),
                   )}

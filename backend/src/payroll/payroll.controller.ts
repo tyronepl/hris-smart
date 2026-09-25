@@ -7,15 +7,19 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 
 import { PayrollService } from './payroll.service';
+import { PayrollPdfService } from './payroll-pdf.service';
 import { CreatePayrollDto } from './dto/create-payroll.dto';
 
 @Controller('payroll')
 export class PayrollController {
   constructor(
     private readonly payrollService: PayrollService,
+    private readonly payrollPdfService: PayrollPdfService,
   ) {}
 
   @Post()
@@ -26,6 +30,25 @@ export class PayrollController {
   @Get()
   findAll() {
     return this.payrollService.findAll();
+  }
+
+  @Get(':id/payslip')
+  async payslip(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() response: Response,
+  ) {
+    const pdf =
+      await this.payrollPdfService.generatePayslip(
+        id,
+      );
+
+    response.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="payslip-${id}.pdf"`,
+      'Content-Length': pdf.length,
+    });
+
+    response.end(pdf);
   }
 
   @Get(':id')

@@ -481,41 +481,43 @@ export default function AbsencesPage() {
           </button>
         </div>
 
-        <div className="mb-4 flex flex-col gap-3 rounded-lg border bg-white p-4 shadow-sm md:flex-row">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-            placeholder="Search employee, reason, or date..."
-            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-black outline-none focus:border-blue-500"
-          />
+        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm mb-2">
+          <div className="grid gap-4 md:grid-cols-2">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
+              placeholder="Search employee, reason, or date..."
+              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-black outline-none focus:border-blue-500"
+            />
 
-          <select
-            value={statusFilter}
-            onChange={(e) =>
-              setStatusFilter(
-                e.target.value as
-                  | "ALL"
-                  | AbsenceStatus,
-              )
-            }
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-black outline-none focus:border-blue-500"
-          >
-            <option value="ALL">
-              All Statuses
-            </option>
+            <select
+              value={statusFilter}
+              onChange={(e) =>
+                setStatusFilter(
+                  e.target.value as
+                    | "ALL"
+                    | AbsenceStatus,
+                )
+              }
+              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-black outline-none focus:border-blue-500"
+            >
+              <option value="ALL">
+                All Statuses
+              </option>
 
-            <option value="UNEXCUSED">
-              Unexcused
-            </option>
+              <option value="UNEXCUSED">
+                Unexcused
+              </option>
 
-            <option value="EXCUSED">
-              Excused
-            </option>
-          </select>
-        </div>
+              <option value="EXCUSED">
+                Excused
+              </option>
+            </select>
+          </div>
+        </div> 
 
         <div className="overflow-x-auto rounded-lg border bg-white shadow-sm">
           {loading ? (
